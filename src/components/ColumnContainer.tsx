@@ -1,20 +1,28 @@
 import { Column, Id, Task } from '../types/columnTypes';
 import TrashIcon from '../icons/TrashIcon';
-import { useSortable } from '@dnd-kit/sortable';
+import { SortableContext, useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import PlusIcon from '../icons/PlusIcon';
+import TaskCard from './TaskCard';
 
 interface Props {
     column: Column;
-    tasks: Task[];
     deleteColumn: (id: Id) => void;
     updateColumn: (id: Id, title: string) => void;
+
+    tasks: Task[];
     createTask: (columnId: Id) => void;
+    deleteTask: (taskId: Id) => void;
+    updateTask: (taskId: Id, content: string) => void;
 }
 
 function ColumnContainer(props: Props) {
-    const { column, tasks, deleteColumn, updateColumn, createTask } = props;
+    const { column, tasks, deleteColumn, updateColumn, createTask, deleteTask, updateTask } = props;
+
+    const tasksIds = useMemo(() => {
+      return tasks.map(task => task.id)
+    }, [tasks]);
 
     const [editMode, setEditMode] = useState(false);
 
@@ -29,14 +37,13 @@ function ColumnContainer(props: Props) {
 
     const style = {
       transition,
-      transform: CSS.Transform.toString(transform),
+      transform: CSS.Translate.toString(transform),
     }
 
     if (isDragging) {
       return <div
                 ref={setNodeRef}
                 style={style}
-
                 className="
                 bg-columnBackgroundColor
                 opacity-60
@@ -99,7 +106,7 @@ function ColumnContainer(props: Props) {
                     py-1
                     text-sm
                     rounded-full
-                  ">0</div>
+                  ">{tasks.length}</div>
                 
                   { !editMode && column.title }
                   { editMode && (
@@ -134,10 +141,12 @@ function ColumnContainer(props: Props) {
 
 
       { /* Column Task Container */}
-      <div className='flex flex-grow'>
-        {tasks.map((task, index) => (
-          <h6 key={index}>{task.content}</h6>
-        ))}
+      <div className='flex flex-grow flex-col gap-4 p-2 overflow-x-hidden overflow-y-auto'>
+        <SortableContext items={tasksIds}>
+          {tasks.map((task) => (
+            <TaskCard key={task.id} task={task} deleteTask={deleteTask} updateTask={updateTask} />
+          ))}
+        </SortableContext>
       </div>
 
 

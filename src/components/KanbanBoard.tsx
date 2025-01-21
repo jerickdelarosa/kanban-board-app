@@ -36,7 +36,12 @@ function KanbanBoard() {
         px-[40px]
     ">
       {/* DndContext is a component that provides the context for drag and drop interactions */}
-      <DndContext sensors={sensors} onDragStart={onDragStart} onDragEnd={onDragEnd} onDragOver={onDragOver}>
+      <DndContext
+        sensors={sensors}
+        onDragStart={onDragStart}
+        onDragEnd={onDragEnd}
+        onDragOver={onDragOver}
+      >
         <div className="m-auto flex gap-4">
             <div className="flex gap-4">
               <SortableContext items={columnsId}>
@@ -74,7 +79,8 @@ function KanbanBoard() {
 
         {/* DragOverlay is a component that renders the drag preview */}
         {
-          createPortal(<DragOverlay>
+          createPortal(
+          <DragOverlay>
             {activeColumn && (
               <ColumnContainer
                 column={activeColumn}
@@ -178,13 +184,11 @@ function KanbanBoard() {
   function onDragStart(event: DragStartEvent) {
     if (event.active.data.current?.type === "Column") {
       setActiveColumn(event.active.data.current.column);
-      console.log(`active id: ${event.active.id}`)
       return;
     }
 
     if (event.active.data.current?.type === "Task") {
       setActiveTask(event.active.data.current.task);
-      console.log(`active id: ${event.active.id}`)
       return;
     }
   }
@@ -211,22 +215,16 @@ function KanbanBoard() {
 
   function onDragOver(event: DragOverEvent) {
     const {active, over} = event;
-    console.log(event)
-    console.log(`active: ${active.id}`)
-    console.log(`over: ${over?.id}`)
 
     if(!over) return;
 
     const activeId = active.id;
     const overId = over.id;
 
-    console.log(`activeId: ${activeId}`)
-    console.log(`overId: ${overId}`)
-
     if(activeId === overId) return;
 
     const isActiveATask = active.data.current?.type === "Task";
-    const isOverATask = active.data.current?.type === "Task";
+    const isOverATask = over.data.current?.type === "Task";
 
     if (!isActiveATask) return;
 
@@ -236,13 +234,6 @@ function KanbanBoard() {
         const activeIndex = tasks.findIndex(task => task.id === activeId);
         const overIndex = tasks.findIndex(task => task.id === overId);
 
-        console.log(`active index: ${activeIndex}`)
-        console.log(`over index: ${overIndex}`)
-
-        if (overIndex === -1) {
-          console.error(`Task with id ${overId} not found in tasks array`, tasks);
-          return tasks;
-        }
         tasks[activeIndex].columnId = tasks[overIndex].columnId;
 
         return arrayMove(tasks, activeIndex, overIndex);

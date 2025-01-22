@@ -48,7 +48,7 @@ function TaskCard(props: Props) {
         {...attributes}
         {...listeners}
         className="bg-mainBackgroundColor opacity-50 px-4 py-2 h-[100px] min-h-[100px] items-center flex text-left border-2 border-dashed
-                border-rose-500 rounded-xl hover:ring-2 cursor-grab relative"
+                border-slate-600 rounded-xl hover:ring-2 cursor-grab relative"
       />
     )
   }
@@ -60,10 +60,10 @@ function TaskCard(props: Props) {
         style={style}
         {...attributes}
         {...listeners}
-        className="bg-mainBackgroundColor px-4 py-2 h-[100px] min-h-[100px] items-center flex text-left rounded-xl hover:ring-2 hover:ring-inset hover:ring-rose-500 cursor-grab relative"
+        className="bg-mainBackgroundColor px-4 py-2 h-[100px] min-h-[100px] items-center flex text-left rounded-xl hover:ring-2 hover:ring-inset hover:ring-slate-600 cursor-grab relative"
       >
         <textarea
-          className="h-[90%] w-full resize-none rounded border-none bg-transparent text-white focus:outline-none"
+          className="h-[90%] w-full resize-none rounded border-none bg-transparent focus:outline-none font-medium"
           value={task.content}
           autoFocus
           placeholder="Enter task content"
@@ -86,7 +86,7 @@ function TaskCard(props: Props) {
       {...attributes}
       {...listeners}
       onClick={toggleEditMode}
-      className="bg-mainBackgroundColor px-4 py-2 h-[100px] min-h-[100px] items-center flex text-left rounded-xl hover:ring-2 hover:ring-inset hover:ring-rose-500 cursor-grab relative task"
+      className="bg-mainBackgroundColor px-4 py-2 h-[100px] min-h-[100px] items-center flex text-left rounded-xl hover:ring-2 hover:ring-inset hover:ring-slate-600 cursor-grab relative task"
       onMouseEnter={() => {
         setMouseIsOver(true)
       }}
@@ -95,7 +95,7 @@ function TaskCard(props: Props) {
       }}
     >
       
-      <p className="my-auto h-[90%] w-full overflow-y-auto overflow-x-hidden whitespace-pre-wrap">
+      <p className="my-auto h-[90%] w-full overflow-y-auto overflow-x-hidden whitespace-pre-wrap font-medium">
         {task.content}
       </p>
       
@@ -103,7 +103,7 @@ function TaskCard(props: Props) {
         mouseIsOver && (
         <button
           onClick={() => deleteTask(task.id)}
-          className="stroke-white absolute right-4 top-1/2 -translate-y-1/2 bg-transparent rounded opacity-60 hover:opacity-100">
+          className="stroke-slate-600 absolute right-4 top-1/2 -translate-y-1/2 bg-transparent rounded opacity-60 hover:opacity-100">
           <TrashIcon />
         </button>)
       }

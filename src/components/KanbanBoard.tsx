@@ -1,5 +1,5 @@
 import PlusIcon from '../icons/PlusIcon'
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Column, Id, Task } from '../types/columnTypes';
 import ColumnContainer from './ColumnContainer';
 import { DndContext, DragEndEvent, DragOverEvent, DragOverlay, DragStartEvent, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
@@ -23,6 +23,55 @@ function KanbanBoard() {
       },
     })
   );
+
+   // Load data from localStorage when the component mounts
+   useEffect(() => {
+    const storedColumns = localStorage.getItem('columns');
+    const storedTasks = localStorage.getItem('tasks');
+
+    if (storedColumns) {
+      try {
+        const parsedColumns = JSON.parse(storedColumns);
+        console.log('Loaded columns from localStorage:', parsedColumns);
+        setColumns(parsedColumns);
+      } catch (error) {
+        console.error('Error parsing columns from localStorage:', error);
+      }
+    } else {
+      // Initialize with default columns if no data in localStorage
+      const defaultColumns: Column[] = [
+        { id: '1', title: 'To Do' },
+        { id: '2', title: 'In Progress'},
+        { id: '3', title: 'Done' },
+      ];
+      setColumns(defaultColumns);
+    }
+
+    if (storedTasks) {
+      try {
+        const parsedTasks = JSON.parse(storedTasks);
+        console.log('Loaded tasks from localStorage:', parsedTasks);
+        setTasks(parsedTasks);
+      } catch (error) {
+        console.error('Error parsing tasks from localStorage:', error);
+      }
+    } else {
+      // Initialize with default tasks if no data in localStorage
+      const defaultTasks: Task[] = [];
+      setTasks(defaultTasks);
+    }
+  }, []);
+
+  // Save columns to localStorage whenever columns state changes
+  useEffect(() => {
+    localStorage.setItem('columns', JSON.stringify(columns));
+  }, [columns]);
+
+  // Save tasks to localStorage whenever tasks state changes
+  useEffect(() => {
+    localStorage.setItem('tasks', JSON.stringify(tasks));
+  }, [tasks]);
+
 
   return (
     <div className="
@@ -68,7 +117,7 @@ function KanbanBoard() {
               bg-mainBackgroundColor
               border-2
               border-columnBackgroundColor
-              p-4 ring-rose-500
+              p-4 ring-slate-600
               hover:ring-2
               flex
               gap-2

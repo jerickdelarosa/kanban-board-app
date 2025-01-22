@@ -40,6 +40,7 @@ function ColumnContainer(props: Props) {
       transform: CSS.Translate.toString(transform),
     }
 
+    // If the column is being dragged, render a placeholder
     if (isDragging) {
       return <div
                 ref={setNodeRef}
@@ -49,7 +50,7 @@ function ColumnContainer(props: Props) {
                 opacity-60
                 border-2
                 border-dashed
-                border-rose-500
+                border-slate-600
                 w-[350px]
                 h-[500px]
                 max-h-[500px]
@@ -95,23 +96,24 @@ function ColumnContainer(props: Props) {
         items-center
         justify-between
       ">
-          <div className="flex gap-2">
+          <div className="flex gap-2 items-center">
 
                 <div className="
                     flex
                     justify-center
                     items-center
-                    bg-columnBackgroundColor
+                    bg-slate-600
                     px-2
                     py-1
                     text-sm
-                    rounded-full
+                    rounded-md
+                    text-white
                   ">{tasks.length}</div>
                 
                   { !editMode && column.title }
                   { editMode && (
                     <input
-                    className="bg-black focus:border-rose-500 border rounded outline-none px-2"
+                    className="bg-mainBackgroundColor focus:border-slate-600 border rounded outline-none px-2"
                       value={column.title}
                       onChange={e => updateColumn(column.id, e.target.value)}
                       autoFocus
@@ -130,7 +132,7 @@ function ColumnContainer(props: Props) {
           className="
             stroke-gray-500 
             hover:stroke-white 
-            hover:bg-columnBackgroundColor
+            hover:bg-slate-600
             rounded px-1 py-2
           ">
             <TrashIcon />
@@ -152,7 +154,7 @@ function ColumnContainer(props: Props) {
 
       { /* Column Footer */}
       <button
-        className="flex gap-2 items-center border-columnBackgroundColor border-2 rounded-md p-4 border-x-columnBackgroundColor hover:bg-mainBackgroundColor hover:text-rose-500 active:bg-black"
+        className="flex gap-2 items-center border-columnBackgroundColor border-2 rounded-md p-4 border-x-columnBackgroundColor hover:bg-mainBackgroundColor hover:text-slate-600 active:bg-slate-600 active:text-white"
         onClick={() => createTask(column.id)}
       >
         <PlusIcon /> Add Task

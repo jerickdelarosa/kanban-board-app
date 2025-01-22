@@ -7,13 +7,14 @@ import { CSS } from "@dnd-kit/utilities";
 interface Props {
     task: Task;
     deleteTask: (id: Id) => void;
-    updateTask: (id: Id,  content: string) => void;
+    updateTask: (id: Id,  content: string, priority: 'low' | 'medium' | 'high') => void;
 }
 
 function TaskCard(props: Props) {
   const { task, deleteTask, updateTask } = props;
   const [mouseIsOver, setMouseIsOver] = useState(false);
   const [editMode, setEditMode] = useState(false);
+  const [priority, setPriority] = useState(task.priority);
 
   const {
     setNodeRef,
@@ -39,6 +40,12 @@ function TaskCard(props: Props) {
     setEditMode((prev) => !prev);
     setMouseIsOver(false);
   }
+
+  const handlePriorityChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newPriority = e.target.value as 'low' | 'medium' | 'high';
+    setPriority(newPriority);
+    updateTask(task.id, task.content, newPriority);
+  };
 
   if(isDragging) {
     return (
@@ -71,7 +78,7 @@ function TaskCard(props: Props) {
           onKeyDown={(e) => {
             if(e.key === 'Enter' && e.shiftKey) toggleEditMode();
           }}
-          onChange={e => updateTask(task.id, e.target.value)}
+          onChange={e => updateTask(task.id, e.target.value, priority)}
         >
           
         </textarea>
@@ -85,19 +92,36 @@ function TaskCard(props: Props) {
       style={style}
       {...attributes}
       {...listeners}
-      onClick={toggleEditMode}
-      className="bg-mainBackgroundColor px-4 py-2 h-[100px] min-h-[100px] items-center flex text-left rounded-xl hover:ring-2 hover:ring-inset hover:ring-slate-600 cursor-grab relative task"
+      className="bg-mainBackgroundColor px-4 py-4 h-auto min-h-[100px] items-start flex flex-col text-left rounded-xl hover:ring-2 hover:ring-inset hover:ring-slate-600 cursor-grab relative task"
       onMouseEnter={() => {
         setMouseIsOver(true)
       }}
       onMouseLeave={() => {
         setMouseIsOver(false)
       }}
-    >
+    > 
       
-      <p className="my-auto h-[90%] w-full overflow-y-auto overflow-x-hidden whitespace-pre-wrap font-medium">
+      {task.priority === 'low' && (
+        <span className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
+        Low
+      </span>
+      )}
+      {task.priority === 'medium' && (
+        <span className="inline-flex items-center rounded-md bg-yellow-50 px-2 py-1 text-xs font-medium text-yellow-800 ring-1 ring-inset ring-yellow-600/20">
+        Medium
+      </span>
+      )}
+      {task.priority === 'high' && (
+        <span className="inline-flex items-center rounded-md bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/10">
+        High
+      </span>
+      )}
+      
+      
+      <p onClick={toggleEditMode} className="mt-2 mb-6 h-[90%] w-full overflow-y-auto overflow-x-hidden whitespace-pre-wrap font-medium">
         {task.content}
       </p>
+      
       
       {
         mouseIsOver && (
@@ -107,6 +131,12 @@ function TaskCard(props: Props) {
           <TrashIcon />
         </button>)
       }
+      
+      <select value={priority} onChange={handlePriorityChange} className="absolute bottom-2 right-2">
+        <option value="low">Low</option>
+        <option value="medium">Medium</option>
+        <option value="high">High</option>
+      </select>
     </div>
   )
 }

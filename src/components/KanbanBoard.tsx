@@ -29,11 +29,24 @@ function KanbanBoard() {
     const storedColumns = localStorage.getItem('columns');
     const storedTasks = localStorage.getItem('tasks');
 
+    console.log(storedColumns); 
+    console.log(storedTasks);
+
+
     if (storedColumns) {
       try {
         const parsedColumns = JSON.parse(storedColumns);
-        console.log('Loaded columns from localStorage:', parsedColumns);
-        setColumns(parsedColumns);
+        if (parsedColumns.length > 0) {
+          setColumns(parsedColumns);
+        } else {
+          // Initialize with default columns if parsedColumns is empty
+          const defaultColumns: Column[] = [
+            { id: '1', title: 'To Do' },
+            { id: '2', title: 'In Progress'},
+            { id: '3', title: 'Done' },
+          ];
+          setColumns(defaultColumns);
+        }
       } catch (error) {
         console.error('Error parsing columns from localStorage:', error);
       }
@@ -50,15 +63,10 @@ function KanbanBoard() {
     if (storedTasks) {
       try {
         const parsedTasks = JSON.parse(storedTasks);
-        console.log('Loaded tasks from localStorage:', parsedTasks);
         setTasks(parsedTasks);
       } catch (error) {
         console.error('Error parsing tasks from localStorage:', error);
       }
-    } else {
-      // Initialize with default tasks if no data in localStorage
-      const defaultTasks: Task[] = [];
-      setTasks(defaultTasks);
     }
   }, []);
 
@@ -82,7 +90,8 @@ function KanbanBoard() {
         items-center
         overflow-x-auto
         overflow-y-hidden
-        px-[40px]
+        md:px-[40px]
+        xl:my-auto
     ">
       {/* DndContext is a component that provides the context for drag and drop interactions */}
       <DndContext
@@ -91,10 +100,10 @@ function KanbanBoard() {
         onDragEnd={onDragEnd}
         onDragOver={onDragOver}
       >
-        <div className="m-auto flex gap-4">
-            <div className="flex gap-4">
+        <div className="m-auto flex gap-4 flex-col-reverse">
+            <div className="flex gap-4 flex-wrap flex-col md:flex-row md:flex-nowrap">
               <SortableContext items={columnsId}>
-                {columns.map((column) => (
+                {columns.map((column, index) => (
                     <ColumnContainer
                         key={column.id}
                         column={column}
@@ -104,14 +113,15 @@ function KanbanBoard() {
                         createTask={createTask}
                         deleteTask={deleteTask}
                         updateTask={updateTask}
+                        isFirstColumn={index === 0}
                     />
                 ))}
               </SortableContext>
             </div>
             <button
               onClick={() => createNewColumn()}
-              className=" h-[60px] w-[350px]
-              min-w-[350px]
+              className=" h-[60px]
+              w-[350px]
               cursor-pointer
               rounded-lg
               bg-mainBackgroundColor
@@ -121,6 +131,7 @@ function KanbanBoard() {
               hover:ring-2
               flex
               gap-2
+              font-medium
               ">
                 <PlusIcon /> Add Column
             </button>
@@ -139,6 +150,7 @@ function KanbanBoard() {
                 createTask={createTask}
                 deleteTask={deleteTask}
                 updateTask={updateTask}
+                isFirstColumn={false}
               /> 
             )}
             { activeTask && (
@@ -199,7 +211,8 @@ function KanbanBoard() {
     const newTask: Task = {
         id: generateId(),
         columnId: columnId,
-        content: `Task ${tasks.length + 1}`
+        content: `Task ${tasks.length + 1}`,
+        priority: 'low'
     };
 
     // Add the new task to the tasks state
@@ -213,7 +226,7 @@ function KanbanBoard() {
     setTasks(filteredTasks);
   }
 
-  function updateTask(taskId: Id, content: string) {
+  function updateTask(taskId: Id, content: string, priority: 'low' | 'medium' | 'high') {
     // Find the task with the given ID
     const updatedTasks = tasks.map(task => {
       // If the task ID does not match, return the task as is
@@ -221,7 +234,8 @@ function KanbanBoard() {
       // If the task ID matches, update the content
       return {
         ...task,
-        content
+        content,
+        priority
       };
 
     });

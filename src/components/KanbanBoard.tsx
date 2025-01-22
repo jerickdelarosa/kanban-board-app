@@ -92,6 +92,7 @@ function KanbanBoard() {
         overflow-y-hidden
         md:px-[40px]
         xl:my-auto
+        py-4 xl:py-0
     ">
       {/* DndContext is a component that provides the context for drag and drop interactions */}
       <DndContext

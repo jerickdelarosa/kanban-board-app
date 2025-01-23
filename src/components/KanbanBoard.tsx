@@ -29,10 +29,6 @@ function KanbanBoard() {
     const storedColumns = localStorage.getItem('columns');
     const storedTasks = localStorage.getItem('tasks');
 
-    console.log(storedColumns); 
-    console.log(storedTasks);
-
-
     if (storedColumns) {
       try {
         const parsedColumns = JSON.parse(storedColumns);
@@ -85,6 +81,7 @@ function KanbanBoard() {
     <div className="
         m-auto
         flex
+        flex-col
         min-h-screen
         w-full
         items-center
@@ -101,7 +98,32 @@ function KanbanBoard() {
         onDragEnd={onDragEnd}
         onDragOver={onDragOver}
       >
-        <div className="m-auto flex gap-4 flex-col-reverse">
+        <div className="m-auto flex gap-4 flex-col">
+          
+            <div className="flex flex-col self-start p-2">
+                <h1 className="font-bold uppercase text-lg">TaskBoard</h1>
+                <p className="text-sm text-slate-500">Streamline Your Workflow with Easy Task Management</p>
+            </div>
+
+            <button
+              onClick={() => createNewColumn()}
+              className=" h-[46px]
+              w-[350px]
+              cursor-pointer
+              rounded-lg
+              bg-mainBackgroundColor
+              border-2
+              border-columnBackgroundColor
+              p-2 ring-slate-600
+              hover:ring-2
+              flex
+              items-center
+              gap-2
+              font-medium
+              ">
+                <PlusIcon /> Add Column
+            </button>
+
             <div className="flex gap-4 flex-wrap flex-col md:flex-row md:flex-nowrap">
               <SortableContext items={columnsId}>
                 {columns.map((column, index) => (
@@ -119,23 +141,7 @@ function KanbanBoard() {
                 ))}
               </SortableContext>
             </div>
-            <button
-              onClick={() => createNewColumn()}
-              className=" h-[60px]
-              w-[350px]
-              cursor-pointer
-              rounded-lg
-              bg-mainBackgroundColor
-              border-2
-              border-columnBackgroundColor
-              p-4 ring-slate-600
-              hover:ring-2
-              flex
-              gap-2
-              font-medium
-              ">
-                <PlusIcon /> Add Column
-            </button>
+            
         </div>
 
         {/* DragOverlay is a component that renders the drag preview */}
